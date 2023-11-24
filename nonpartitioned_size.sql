@@ -25,7 +25,7 @@ AND a.owner = b.owner
 AND a.segment_name = b.table_name
 and a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
 GROUP BY a.owner, b.table_name, a.tablespace_name, a.segment_name, a.segment_type, b.compression
-HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1024
+HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
 ORDER BY 1,2,3,4,5;
 
 PROMPT Report large indexes on tables 1GB+
