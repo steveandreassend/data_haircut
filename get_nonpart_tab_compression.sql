@@ -48,7 +48,7 @@ BEGIN
     DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
     DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
     DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
-    DBMS_OUTPUT.PUT_LINE('Compression ratio                                               : ' ||l_blkcnt_uncmp/l_blkcnt_cmp||' to 1');
+    DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00')||' to 1');
     DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
   END LOOP;
 END;
