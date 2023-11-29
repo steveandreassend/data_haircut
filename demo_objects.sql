@@ -39,3 +39,35 @@ INSERT INTO SALES VALUES (1,TO_DATE('2023-07-01', 'YYYY-MM-DD')-1,100, NULL);
 INSERT INTO SALES VALUES (1,TO_DATE('2023-10-01', 'YYYY-MM-DD')-1,100, NULL);
 INSERT INTO SALES VALUES (1,TO_DATE('2024-01-01', 'YYYY-MM-DD')-1,100, NULL);
 COMMIT;
+
+/* Generate BLOB data */
+DECLARE
+  v_clob        CLOB;
+  v_blob        BLOB;
+  v_dest_offset INTEGER := 1;
+  v_src_offset  INTEGER := 1;
+  v_warn        INTEGER;
+  v_ctx         INTEGER := DBMS_LOB.default_lang_ctx;
+BEGIN
+  FOR idx IN 1..5 LOOP
+    v_clob := v_clob || DBMS_RANDOM.string('x', 2000);
+  END LOOP;
+
+  DBMS_LOB.createTemporary(v_blob, FALSE);
+
+  DBMS_LOB.convertToBlob(
+    dest_lob      => v_blob,
+    src_clob      => v_clob,
+    amount        => DBMS_LOB.lobmaxsize,
+    dest_offset   => v_dest_offset,
+    src_offset    => v_src_offset,
+    blob_csid     => DBMS_LOB.default_csid,
+    lang_context  => v_ctx,
+    warning       => v_warn
+  );
+    
+  UPDATE PRODUCTS SET PDF = v_blob;
+  COMMIT;
+END;
+/
+
