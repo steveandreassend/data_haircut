@@ -9,7 +9,7 @@ DECLARE
   l_row_cmp pls_integer;
   l_row_uncmp pls_integer;
   l_cmp_ratio pls_integer;
-  l_comptype_str varchar2(100);
+  l_cmptype_str varchar2(100);
   l_scratchtbsname varchar2(256) := 'USERS';
   l_tabowner varchar2(256) := 'AAX2SW';
   l_tabname varchar2(256) := 'D_COMMUNICATIONS';
@@ -37,7 +37,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Block count uncompressed = '|| l_blkcnt_uncmp);
   DBMS_OUTPUT.PUT_LINE('Row count per block compressed = '|| l_row_cmp);
   DBMS_OUTPUT.PUT_LINE('Row count per block uncompressed = '|| l_row_uncmp);
-  DBMS_OUTPUT.PUT_LINE('Compression type = '|| l_comptype_str);
+  DBMS_OUTPUT.PUT_LINE('Compression type = '|| l_cmptype_str);
   DBMS_OUTPUT.PUT_LINE('Compression ratio = '|| l_cmp_ratio);
 END;
 /
@@ -50,7 +50,7 @@ DECLARE
   l_row_cmp pls_integer;
   l_row_uncmp pls_integer;
   l_cmp_ratio pls_integer;
-  l_comptype_str varchar2(100);
+  l_cmptype_str varchar2(100);
   l_scratchtbsname varchar2(256) := 'USERS';
   l_tabowner varchar2(256) := 'AAX2SW';
   l_tabname varchar2(256) := 'D_COMMUNICATIONS';
@@ -78,7 +78,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Block count uncompressed = '|| l_blkcnt_uncmp);
   DBMS_OUTPUT.PUT_LINE('Row count per block compressed = '|| l_row_cmp);
   DBMS_OUTPUT.PUT_LINE('Row count per block uncompressed = '|| l_row_uncmp);
-  DBMS_OUTPUT.PUT_LINE('Compression type = '|| l_comptype_str);
+  DBMS_OUTPUT.PUT_LINE('Compression type = '|| l_cmptype_str);
   DBMS_OUTPUT.PUT_LINE('Compression ratio = '|| l_cmp_ratio);
 END;
 /
@@ -91,7 +91,7 @@ DECLARE
   l_row_cmp pls_integer;
   l_row_uncmp pls_integer;
   l_cmp_ratio pls_integer;
-  l_comptype_str varchar2(100);
+  l_cmptype_str varchar2(100);
   l_scratchtbsname varchar2(256) := 'USERS';
   l_tabowner varchar2(256) := 'AAX2SW';
   l_tabname varchar2(256) := 'D_COMMUNICATIONS';
@@ -119,7 +119,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Block count uncompressed = '|| l_blkcnt_uncmp);
   DBMS_OUTPUT.PUT_LINE('Row count per block compressed = '|| l_row_cmp);
   DBMS_OUTPUT.PUT_LINE('Row count per block uncompressed = '|| l_row_uncmp);
-  DBMS_OUTPUT.PUT_LINE('Compression type = '|| l_comptype_str);
+  DBMS_OUTPUT.PUT_LINE('Compression type = '|| l_cmptype_str);
   DBMS_OUTPUT.PUT_LINE('Compression ratio = '|| l_cmp_ratio);
 END;
 /
