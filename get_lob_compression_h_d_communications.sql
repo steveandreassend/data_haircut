@@ -4,7 +4,7 @@ set serveroutput on
 PROMPT Get LOW LOB COMPRESSION ratios
 
 DECLARE
-  l_blkcnt_cnt pls_integer;
+  l_blkcnt_cmp pls_integer;
   l_blkcnt_uncmp pls_integer;
   l_row_cmp pls_integer;
   l_row_uncmp pls_integer;
@@ -45,7 +45,7 @@ END;
 PROMPT Get MEDIUM LOB COMPRESSION ratios...
 
 DECLARE
-  l_blkcnt_cnt pls_integer;
+  l_blkcnt_cmp pls_integer;
   l_blkcnt_uncmp pls_integer;
   l_row_cmp pls_integer;
   l_row_uncmp pls_integer;
@@ -86,7 +86,7 @@ END;
 PROMPT Get HIGH LOB COMPRESSION ratios....
 
 DECLARE
-  l_blkcnt_cnt pls_integer;
+  l_blkcnt_cmp pls_integer;
   l_blkcnt_uncmp pls_integer;
   l_row_cmp pls_integer;
   l_row_uncmp pls_integer;
