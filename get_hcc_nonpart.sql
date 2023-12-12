@@ -30,7 +30,7 @@ BEGIN
     HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
   )
   LOOP
-    DBMS_OUTPUT.PUT_LINE('Object = ' || x.owner || '.' || x.table_name );
+    DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || x.owner || '.' || x.table_name );
     FOR i IN 1..l_numbers.COUNT LOOP
       -- Loop through different compression types
       DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
