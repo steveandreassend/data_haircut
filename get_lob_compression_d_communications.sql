@@ -40,12 +40,12 @@ BEGIN
 
     -- Display compression information for each compression type
     DBMS_OUTPUT.PUT_LINE('Object = ' || l_tabowner || '.' || l_tabname || '.' || l_lobname);
+    DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
+    DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);    
+    DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
     DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    :  ' || l_blkcnt_cmp);
     DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  :  ' || l_blkcnt_uncmp);
     DBMS_OUTPUT.PUT_LINE('Number of LOBs actually sampled                                 :  ' || l_lobcnt);
-    DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           :  ' || l_cmp_ratio);
-    DBMS_OUTPUT.PUT_LINE('Compression ratio                                               :  ' ||l_blkcnt_uncmp/l_blkcnt_cmp||' to 1');
-    DBMS_OUTPUT.PUT_LINE('Compression Type                                                :  ' || l_comptype_str);
   END LOOP;
 END;
 /
