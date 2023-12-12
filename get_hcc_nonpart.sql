@@ -8,7 +8,14 @@ DECLARE
   l_row_uncmp       PLS_INTEGER;
   l_cmp_ratio      NUMBER;
   l_comptype_str   VARCHAR2(32767);
-  l_scratchtbsname varchar2(256) := 'USERS';
+  l_scratchtbsname varchar2(256) := 'DATA';
+
+  l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(
+    DBMS_COMPRESSION.COMP_QUERY_LOW,
+    DBMS_COMPRESSION.COMP_QUERY_HIGH,
+    DBMS_COMPRESSION.COMP_ARCHIVE_LOW,
+    DBMS_COMPRESSION.COMP_ARCHIVE_HIGH
+  );
 
 BEGIN
   /* find all tables larger than 1GB that are not partitioned */
@@ -21,40 +28,36 @@ BEGIN
     AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
     GROUP BY a.owner, b.table_name
     HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
-
   )
   LOOP
-  DBMS_OUTPUT.PUT_LINE('Object = ' || x.owner || '.' || x.table_name );
-  -- Loop through different compression types
-    DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-      scratchtbsname => l_scratchtbsname,
-      ownname        => x.owner,
-      objname        => x.table_name,
-      subobjname     => NULL,
-      comptype       => DBMS_COMPRESSION.COMP_ADVANCED,
-      blkcnt_cmp     => l_blkcnt_cmp,
-      blkcnt_uncmp   => l_blkcnt_uncmp,
-      row_cmp        => l_row_cmp,
-      row_uncmp      => l_row_uncmp,
-      cmp_ratio      => l_cmp_ratio,  
-      comptype_str   => l_comptype_str,
-      subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows, /* 1000000 rows sampled */ /* for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
-      objtype        => DBMS_COMPRESSION.objtype_table
-    );
+    DBMS_OUTPUT.PUT_LINE('Object = ' || x.owner || '.' || x.table_name );
+    FOR i IN 1..l_numbers.COUNT LOOP
+      -- Loop through different compression types
+      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+        scratchtbsname => l_scratchtbsname,
+        ownname        => x.owner,
+        objname        => x.table_name,
+        subobjname     => NULL,
+        comptype       => l_numbers(i),
+        blkcnt_cmp     => l_blkcnt_cmp,
+        blkcnt_uncmp   => l_blkcnt_uncmp,
+        row_cmp        => l_row_cmp,
+        row_uncmp      => l_row_uncmp,
+        cmp_ratio      => l_cmp_ratio,  
+        comptype_str   => l_comptype_str,
+        subset_numrows => DBMS_COMPRESSION.COMP_RATIO_ALLROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
+        objtype        => DBMS_COMPRESSION.objtype_table
+      );
 
-    -- Display compression information for each compression type
-    DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
-    DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);    
-    DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
-    DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
-    DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
-    DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
-    DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
-
-
+      -- Display compression information for each compression type
+      DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
+      DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
+      DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
+      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
+      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
+      DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
+      DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
+    END LOOP;  
   END LOOP;
 END;
 /
-
-
-
