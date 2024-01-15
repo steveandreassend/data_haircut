@@ -32,7 +32,7 @@ BEGIN
       AND a.partition_name = b.partition_name
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
       GROUP BY a.owner, b.table_name, a.partition_name, a.segment_name, a.segment_type
-      HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 0
+      HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
     )
     WHERE rn = 1
   )
