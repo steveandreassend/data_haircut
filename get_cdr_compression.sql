@@ -27,7 +27,7 @@ BEGIN
       SELECT a.owner, b.table_name, a.partition_name, a.segment_name, a.segment_type,
       ROW_NUMBER() OVER (PARTITION BY b.table_name ORDER BY SUM(a.bytes) / (1024 * 1024 * 1024) DESC) AS rn
       FROM dba_segments a, dba_tab_partitions b, dba_tablespaces c
-      WHERE a.segment_type = 'TABLE PARTITION'
+      WHERE a.segment_type IN ('TABLE PARTITION','TABLE SUBPARTITION')
       AND c.tablespace_name = a.tablespace_name
       AND a.owner = b.table_owner
       AND a.segment_name = b.table_name
@@ -35,7 +35,7 @@ BEGIN
       AND b.table_name IN ('C_CDRS','C_CDRS_BODY','D_TOLL_OBJECT_USAGE') /* specify your table names */
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
       GROUP BY a.owner, b.table_name, a.partition_name, a.segment_name, a.segment_type
-      HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 0
+      HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
     )
     WHERE rn = 1
   )
