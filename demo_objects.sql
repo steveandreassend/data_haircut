@@ -25,6 +25,29 @@ END;
 
 COMMIT;
 
+/* alternate faster way
+
+INSERT INTO PRODUCTS
+SELECT level,
+       CASE
+         WHEN MOD(level,2)=0 THEN 'CODE1'
+         ELSE 'CODE2'
+       END,
+       CASE
+         WHEN MOD(level,2)=0 THEN 'Description for CODE1'
+         ELSE 'Description for CODE2'
+       END,
+       CASE
+         WHEN MOD(level,2)=0 THEN 'CLOB description for CODE1'
+         ELSE 'CLOB description for CODE2'
+       END,
+       CASE
+         WHEN MOD(level,2)=0 THEN TO_DATE('01/07/2015','DD/MM/YYYY')
+         ELSE TO_DATE('01/07/2016','DD/MM/YYYY')
+       END
+FROM   dual
+CONNECT BY level <= 100000;
+*/
 
 CREATE TABLE SALES (
     sales_id NUMBER,
