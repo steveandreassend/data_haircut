@@ -46,7 +46,7 @@ BEGIN
         scratchtbsname => l_scratchtbsname,
         ownname        => x.owner,
         objname        => x.table_name,
-        subobjname     => NULL,
+        subobjname     => x.partition_name,
         comptype       => l_numbers(i),
         blkcnt_cmp     => l_blkcnt_cmp,
         blkcnt_uncmp   => l_blkcnt_uncmp,
