@@ -10,14 +10,13 @@ DECLARE
   l_comptype_str   VARCHAR2(32767);
   l_scratchtbsname varchar2(256) := 'USERS';
 
-  l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(DBMS_COMPRESSION.COMP_ADVANCED);
-/* disable HCC unless you have Exadata
+  l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(DBMS_COMPRESSION.COMP_ADVANCED,
+  /* Compression Advisor does not require Exadata to validate HCC ratios */
 DBMS_COMPRESSION.COMP_QUERY_LOW,
     DBMS_COMPRESSION.COMP_QUERY_HIGH,
     DBMS_COMPRESSION.COMP_ARCHIVE_LOW,
     DBMS_COMPRESSION.COMP_ARCHIVE_HIGH
   );
-*/
 
 BEGIN
 /* find all tables larger than 1GB that are partitioned, and get the largest partition */
