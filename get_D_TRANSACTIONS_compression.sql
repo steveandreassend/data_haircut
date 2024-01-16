@@ -113,7 +113,7 @@ DECLARE
   l_row_uncmp       PLS_INTEGER;
   l_cmp_ratio      NUMBER;
   l_comptype_str   VARCHAR2(32767);
-  l_scratchtbsname varchar2(256) := 'DATA';
+  l_scratchtbsname varchar2(256) := 'USERS';
 
   l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(
     DBMS_COMPRESSION.comp_index_advanced_low,
