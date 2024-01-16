@@ -73,6 +73,37 @@ BEGIN
 END;
 /
 
+/* alternate way to do all index types together
+  
+DECLARE
+  l_index_cr      DBMS_COMPRESSION.compreclist;
+  l_comptype_str  VARCHAR2(32767);
+BEGIN
+  DBMS_COMPRESSION.get_compression_ratio (
+    scratchtbsname  => 'USERS',
+    ownname         => 'ADMIN',
+    tabname         => 'C_CDRS',
+    comptype        => DBMS_COMPRESSION.comp_index_advanced_low,
+    index_cr        => l_index_cr,
+    comptype_str    => l_comptype_str,
+    subset_numrows  => DBMS_COMPRESSION.comp_ratio_lob_maxrows
+  );
+
+  FOR i IN l_index_cr.FIRST .. l_index_cr.LAST LOOP
+    DBMS_OUTPUT.put_line('----');
+    DBMS_OUTPUT.put_line('ownname      : ' || l_index_cr(i).ownname);
+    DBMS_OUTPUT.put_line('objname      : ' || l_index_cr(i).objname);
+    DBMS_OUTPUT.put_line('blkcnt_cmp   : ' || l_index_cr(i).blkcnt_cmp);
+    DBMS_OUTPUT.put_line('blkcnt_uncmp : ' || l_index_cr(i).blkcnt_uncmp);
+    DBMS_OUTPUT.put_line('row_cmp      : ' || l_index_cr(i).row_cmp);
+    DBMS_OUTPUT.put_line('row_uncmp    : ' || l_index_cr(i).row_uncmp);
+    DBMS_OUTPUT.put_line('cmp_ratio    : ' || l_index_cr(i).cmp_ratio);
+    DBMS_OUTPUT.put_line('objtype      : ' || l_index_cr(i).objtype);
+  END LOOP;
+END;
+/
+*/
+
 PROMPT Reporting partitioned indexes...
 
 DECLARE
