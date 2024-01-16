@@ -147,7 +147,7 @@ END;
 
 PROMPT Reporting non-partitioned indexes...
 
-  DECLARE
+DECLARE
   l_blkcnt_cmp     PLS_INTEGER;
   l_blkcnt_uncmp   PLS_INTEGER;
   l_row_cmp        PLS_INTEGER;
@@ -188,7 +188,7 @@ BEGIN
         scratchtbsname => l_scratchtbsname,
         ownname        => x.owner,
         objname        => x.index_name,
-        subobjname     => x.partition_name,
+        subobjname     => NULL,
         comptype       => l_numbers(i),
         blkcnt_cmp     => l_blkcnt_cmp,
         blkcnt_uncmp   => l_blkcnt_uncmp,
