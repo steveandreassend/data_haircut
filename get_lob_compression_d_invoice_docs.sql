@@ -21,6 +21,7 @@ DECLARE
   );
 
 BEGIN
+  --there are 24 different document types, each stored in their own partition, and sub-partitioned by date range
   FOR x IN (
     SELECT DISTINCT partition_name
     FROM dba_tab_partitions
@@ -29,7 +30,7 @@ BEGIN
     ORDER BY 1
   ) LOOP
 
-    DBMS_OUTPUT.PUT_LINE('Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name ||'.' || l_lobname);
+    DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name ||'.' || l_lobname);
 
     FOR i IN 1..l_numbers.COUNT LOOP
     -- Loop through different compression types
