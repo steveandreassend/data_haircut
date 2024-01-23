@@ -22,6 +22,37 @@ DECLARE
 
 BEGIN
   --there are 24 different document types, each stored in their own partition, and sub-partitioned by date range
+/*
+PARTITION_NAME
+------------------------------
+P_INV_DOC_APPBRS
+P_INV_DOC_APPFLN
+P_INV_DOC_APPSFC
+P_INV_DOC_CPO
+P_INV_DOC_DTCSV
+P_INV_DOC_DTS
+P_INV_DOC_DTSCUST
+P_INV_DOC_EFNBAG
+P_INV_DOC_EFNDE
+P_INV_DOC_FIBRS
+P_INV_DOC_FIFLN
+P_INV_DOC_FILHT
+P_INV_DOC_FISFC
+P_INV_DOC_MABAG
+P_INV_DOC_MADE
+P_INV_DOC_RS
+P_INV_DOC_SB
+P_INV_DOC_SF
+P_INV_DOC_SW
+P_INV_DOC_TDPOL
+P_INV_DOC_TFCSV
+P_INV_DOC_TSPOL
+P_INV_DOC_VSLHT
+P_INV_DOC_WDCSV
+
+24 rows selected. 
+*/
+
   FOR x IN (
     SELECT DISTINCT partition_name
     FROM dba_tab_partitions
