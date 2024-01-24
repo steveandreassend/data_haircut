@@ -26,21 +26,28 @@ BEGIN
   LOOP
   DBMS_OUTPUT.PUT_LINE('Object = ' || x.owner || '.' || x.table_name );
   -- Loop through different compression types
-    DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-      scratchtbsname => l_scratchtbsname,
-      ownname        => x.owner,
-      objname        => x.table_name,
-      subobjname     => NULL,
-      comptype       => DBMS_COMPRESSION.COMP_ADVANCED,
-      blkcnt_cmp     => l_blkcnt_cmp,
-      blkcnt_uncmp   => l_blkcnt_uncmp,
-      row_cmp        => l_row_cmp,
-      row_uncmp      => l_row_uncmp,
-      cmp_ratio      => l_cmp_ratio,  
-      comptype_str   => l_comptype_str,
-      subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows, /* 1000000 rows sampled */
-      objtype        => DBMS_COMPRESSION.objtype_table
-    );
+    BEGIN
+      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+        scratchtbsname => l_scratchtbsname,
+        ownname        => x.owner,
+        objname        => x.table_name,
+        subobjname     => NULL,
+        comptype       => DBMS_COMPRESSION.COMP_ADVANCED,
+        blkcnt_cmp     => l_blkcnt_cmp,
+        blkcnt_uncmp   => l_blkcnt_uncmp,
+        row_cmp        => l_row_cmp,
+        row_uncmp      => l_row_uncmp,
+        cmp_ratio      => l_cmp_ratio,  
+        comptype_str   => l_comptype_str,
+        subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows, /* 1000000 rows sampled */
+        objtype        => DBMS_COMPRESSION.objtype_table
+      );
+    EXCEPTION
+      WHEN OTHERS THEN
+        -- Handling exceptions
+        DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+    END;
 
     -- Display compression information for each compression type
     DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
