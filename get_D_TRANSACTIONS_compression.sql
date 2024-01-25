@@ -1,5 +1,5 @@
 SET LINES 400 PAGES 1000
-set serveroutput on SIZE 25000
+set serveroutput on
 
 PROMPT Reporting table compression...
 
@@ -33,7 +33,7 @@ BEGIN
       AND a.owner = b.table_owner
       AND a.segment_name = b.table_name
       AND a.partition_name = b.partition_name
-      AND b.table_name IN ('C_CDRS','C_CDRS_BODY','D_TOLL_OBJECT_USAGE') /* specify your table names */
+      AND b.table_name IN ('D_TRANSACTIONS') /* specify your table names */
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
       GROUP BY a.owner, b.table_name, a.partition_name, a.segment_name, a.segment_type
       HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
@@ -135,7 +135,7 @@ BEGIN
       AND a.owner = b.index_owner
       AND a.segment_name = b.index_name
       AND a.partition_name = b.partition_name
-      AND d.table_name IN ('C_CDRS','C_CDRS_BODY','D_TOLL_OBJECT_USAGE') /* specify your table names */
+      AND d.table_name IN ('D_TRANSACTIONS') /* specify your table names */
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
       GROUP BY a.owner, d.table_owner, d.table_name, b.index_name, a.partition_name, a.segment_name, a.segment_type
     )
@@ -204,7 +204,7 @@ BEGIN
       AND c.tablespace_name = a.tablespace_name
       AND a.owner = d.owner
       AND a.segment_name = d.index_name
-      AND d.table_name IN ('C_CDRS','C_CDRS_BODY','D_TOLL_OBJECT_USAGE') /* specify your table names */
+      AND d.table_name IN ('D_TRANSACTIONS') /* specify your table names */
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
       GROUP BY a.owner, d.table_owner, d.table_name, d.index_name, a.segment_name, a.segment_type
     )
