@@ -44,30 +44,37 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || x.owner || '.' || x.table_name||'.'||x.partition_name);
     FOR i IN 1..l_numbers.COUNT LOOP
       -- Loop through different compression types
-      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-        scratchtbsname => l_scratchtbsname,
-        ownname        => x.owner,
-        objname        => x.table_name,
-        subobjname     => x.partition_name,
-        comptype       => l_numbers(i),
-        blkcnt_cmp     => l_blkcnt_cmp,
-        blkcnt_uncmp   => l_blkcnt_uncmp,
-        row_cmp        => l_row_cmp,
-        row_uncmp      => l_row_uncmp,
-        cmp_ratio      => l_cmp_ratio,  
-        comptype_str   => l_comptype_str,
-        subset_numrows => DBMS_COMPRESSION.COMP_RATIO_MINROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
-        objtype        => DBMS_COMPRESSION.objtype_table
-      );
+      BEGIN
+        DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+          scratchtbsname => l_scratchtbsname,
+          ownname        => x.owner,
+          objname        => x.table_name,
+          subobjname     => x.partition_name,
+          comptype       => l_numbers(i),
+          blkcnt_cmp     => l_blkcnt_cmp,
+          blkcnt_uncmp   => l_blkcnt_uncmp,
+          row_cmp        => l_row_cmp,
+          row_uncmp      => l_row_uncmp,
+          cmp_ratio      => l_cmp_ratio,  
+          comptype_str   => l_comptype_str,
+          subset_numrows => DBMS_COMPRESSION.COMP_RATIO_MINROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
+          objtype        => DBMS_COMPRESSION.objtype_table
+        );
 
-      -- Display compression information for each compression type
-      DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
-      DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
-      DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str||' '||l_numbers(i));
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
+        -- Display compression information for each compression type
+        DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
+        DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
+        DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str||' '||l_numbers(i));
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
+        DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
+        DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
+      EXCEPTION
+        WHEN OTHERS THEN
+          -- Handling exceptions
+          DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+      END;
     END LOOP;  
   END LOOP;
 END;
@@ -146,31 +153,37 @@ BEGIN
 
     FOR i IN 1..l_numbers.COUNT LOOP
       -- Loop through different compression types
-      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-        scratchtbsname => l_scratchtbsname,
-        ownname        => x.owner,
-        objname        => x.index_name,
-        subobjname     => x.partition_name,
-        comptype       => l_numbers(i),
-        blkcnt_cmp     => l_blkcnt_cmp,
-        blkcnt_uncmp   => l_blkcnt_uncmp,
-        row_cmp        => l_row_cmp,
-        row_uncmp      => l_row_uncmp,
-        cmp_ratio      => l_cmp_ratio,  
-        comptype_str   => l_comptype_str,
-        subset_numrows => DBMS_COMPRESSION.COMP_RATIO_MINROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
-        objtype        => DBMS_COMPRESSION.objtype_index
-      );
+      BEGIN
+        DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+          scratchtbsname => l_scratchtbsname,
+          ownname        => x.owner,
+          objname        => x.index_name,
+          subobjname     => x.partition_name,
+          comptype       => l_numbers(i),
+          blkcnt_cmp     => l_blkcnt_cmp,
+          blkcnt_uncmp   => l_blkcnt_uncmp,
+          row_cmp        => l_row_cmp,
+          row_uncmp      => l_row_uncmp,
+          cmp_ratio      => l_cmp_ratio,  
+          comptype_str   => l_comptype_str,
+          subset_numrows => DBMS_COMPRESSION.COMP_RATIO_MINROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
+          objtype        => DBMS_COMPRESSION.objtype_index
+        );
 
-      -- Display compression information for each compression type
-      DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
-      DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
-      DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str||' '||l_numbers(i));
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
-
+        -- Display compression information for each compression type
+        DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
+        DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
+        DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str||' '||l_numbers(i));
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
+        DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
+        DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
+      EXCEPTION
+        WHEN OTHERS THEN
+          -- Handling exceptions
+          DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+      END;
     END LOOP;
   END LOOP;
 END;
@@ -215,31 +228,37 @@ BEGIN
 
     FOR i IN 1..l_numbers.COUNT LOOP
       -- Loop through different compression types
-      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-        scratchtbsname => l_scratchtbsname,
-        ownname        => x.owner,
-        objname        => x.index_name,
-        subobjname     => NULL,
-        comptype       => l_numbers(i),
-        blkcnt_cmp     => l_blkcnt_cmp,
-        blkcnt_uncmp   => l_blkcnt_uncmp,
-        row_cmp        => l_row_cmp,
-        row_uncmp      => l_row_uncmp,
-        cmp_ratio      => l_cmp_ratio,  
-        comptype_str   => l_comptype_str,
-        subset_numrows => DBMS_COMPRESSION.COMP_RATIO_MINROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
-        objtype        => DBMS_COMPRESSION.objtype_index
-      );
+      BEGIN
+        DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+          scratchtbsname => l_scratchtbsname,
+          ownname        => x.owner,
+          objname        => x.index_name,
+          subobjname     => NULL,
+          comptype       => l_numbers(i),
+          blkcnt_cmp     => l_blkcnt_cmp,
+          blkcnt_uncmp   => l_blkcnt_uncmp,
+          row_cmp        => l_row_cmp,
+          row_uncmp      => l_row_uncmp,
+          cmp_ratio      => l_cmp_ratio,  
+          comptype_str   => l_comptype_str,
+          subset_numrows => DBMS_COMPRESSION.COMP_RATIO_MINROWS, /* 1000000 rows sampled | for all rows use: DBMS_COMPRESSION.COMP_RATIO_ALLROWS */
+          objtype        => DBMS_COMPRESSION.objtype_index
+        );
 
-      -- Display compression information for each compression type
-      DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
-      DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
-      DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str||' '||l_numbers(i));
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
-
+        -- Display compression information for each compression type
+        DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);
+        DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
+        DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str||' '||l_numbers(i));
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
+        DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
+        DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
+      EXCEPTION
+        WHEN OTHERS THEN
+          -- Handling exceptions
+          DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+      END;
     END LOOP;
   END LOOP;
 END;
