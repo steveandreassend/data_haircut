@@ -1,5 +1,5 @@
 SET LINES 400 PAGES 1000
-set serveroutput on SIZE 25000
+set serveroutput on
 
 DECLARE
   l_blkcnt_cmp     PLS_INTEGER;
@@ -20,7 +20,15 @@ DECLARE
     DBMS_COMPRESSION.COMP_LOB_HIGH
   );
 
+  /* To avoid: ORA-20000: Compression Advisor sample size must be at least 0.1 percent of the total lobs */
+  l_sample_size PLS_INTEGER;
 BEGIN
+  EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' WHERE '||l_lobname||' IS NOT NULL'
+  INTO l_sample_size;
+
+  SELECT GREATEST(l_sample_size, DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
+  FROM DUAL;
+
   FOR i IN 1..l_numbers.COUNT LOOP
   -- Loop through different compression types
     DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
@@ -35,7 +43,7 @@ BEGIN
       lobcnt         => l_lobcnt,
       cmp_ratio      => l_cmp_ratio,
       comptype_str   => l_comptype_str,
-      subset_numrows => DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS /* 5000 rows sampled */
+      subset_numrows => l_sample_size
     );
 
     -- Display compression information for each compression type
