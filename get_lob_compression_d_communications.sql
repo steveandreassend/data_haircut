@@ -30,7 +30,7 @@ BEGIN
   SELECT GREATEST(l_sample_size, DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
   FROM DUAL;
 
-FOR i IN 1..l_numbers.COUNT LOOP
+  FOR i IN 1..l_numbers.COUNT LOOP
   -- Loop through different compression types
     DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
       scratchtbsname => l_scratchtbsname,
