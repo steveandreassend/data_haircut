@@ -24,7 +24,7 @@ DECLARE
   l_sample_size PLS_INTEGER;
 
 BEGIN
-  EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' WHERE '||l_lobname||' IS NOT NULL';
+  EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' WHERE '||l_lobname||' IS NOT NULL'
   INTO l_sample_size;
 
   SELECT GREATEST(l_sample_size, DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
