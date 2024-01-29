@@ -14,7 +14,7 @@ PROMPT Determine size of CLOB data
 
 PROMPT Determine the storage usage in a LOB segment using DBMS_SPACE.SPACE_USAGE
 
-SET SERVEROUTPUT ON SIZE 25000
+SET SERVEROUTPUT ON
 
 CREATE OR REPLACE PROCEDURE check_space_securefile (
   p_owner in varchar2,
