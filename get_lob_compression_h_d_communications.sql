@@ -22,6 +22,7 @@ DECLARE
 
   /* To avoid: ORA-20000: Compression Advisor sample size must be at least 0.1 percent of the total lobs */
   l_sample_size PLS_INTEGER;
+
 BEGIN
   EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' WHERE '||l_lobname||' IS NOT NULL'
   INTO l_sample_size;
