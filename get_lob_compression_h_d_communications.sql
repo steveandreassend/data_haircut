@@ -1,5 +1,5 @@
 SET LINES 400 PAGES 1000
-set serveroutput on SIZE 25000
+set serveroutput on
 
 DECLARE
   l_blkcnt_cmp     PLS_INTEGER;
