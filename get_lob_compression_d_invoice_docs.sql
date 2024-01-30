@@ -20,6 +20,10 @@ DECLARE
     DBMS_COMPRESSION.COMP_LOB_HIGH
   );
 
+  /* To avoid: ORA-20000: Compression Advisor sample size must be at least 0.1 percent of the total lobs */
+  l_sample_size PLS_INTEGER;
+
+
 BEGIN
   --there are 24 different document types, each stored in their own partition, and sub-partitioned by date range
 /*
@@ -63,8 +67,15 @@ P_INV_DOC_WDCSV
 
     DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name ||'.' || l_lobname);
 
+    EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' PARTITION ('|x.partition_name|') WHERE '||l_lobname||' IS NOT NULL'
+    INTO l_sample_size;
+
+    SELECT GREATEST(l_sample_size, DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
+    FROM DUAL;
+
     FOR i IN 1..l_numbers.COUNT LOOP
-    -- Loop through different compression types
+      BEGIN
+      -- Loop through different compression types
       DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
         scratchtbsname => l_scratchtbsname,
         tabowner       => l_tabowner,
@@ -77,16 +88,22 @@ P_INV_DOC_WDCSV
         lobcnt         => l_lobcnt,
         cmp_ratio      => l_cmp_ratio,
         comptype_str   => l_comptype_str,
-        subset_numrows => DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS /* 5000 rows sampled */
+        subset_numrows => l_sample_size
       );
 
-      -- Display compression information for each compression type
-      DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
-      DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);    
-      DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
-      DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
-      DBMS_OUTPUT.PUT_LINE('Number of LOBs actually sampled                                 : ' || l_lobcnt);
+        -- Display compression information for each compression type
+        DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
+        DBMS_OUTPUT.PUT_LINE('Estimated Compression Ratio of Sample                           : ' || l_cmp_ratio);    
+        DBMS_OUTPUT.PUT_LINE('Compression Ratio                                               : ' || LTRIM(TO_CHAR(l_blkcnt_uncmp/l_blkcnt_cmp,'999,999,999.00'))||' to 1');
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the compressed sample of the object    : ' || l_blkcnt_cmp);
+        DBMS_OUTPUT.PUT_LINE('Number of blocks used by the uncompressed sample of the object  : ' || l_blkcnt_uncmp);
+        DBMS_OUTPUT.PUT_LINE('Number of LOBs actually sampled                                 : ' || l_lobcnt);
+      EXCEPTION
+        WHEN OTHERS THEN
+          -- Handling exceptions
+          DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+      END;
     END LOOP;
   END LOOP;
 END;
