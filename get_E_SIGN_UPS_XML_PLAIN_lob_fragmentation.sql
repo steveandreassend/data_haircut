@@ -1,6 +1,7 @@
 SET SERVEROUTPUT ON
 SET LINES 400 PAGES 1000
-
+COL getlength FORMAT 999,999,999,999,999,999
+COL cloblengthb FORMAT 999,999,999,999,999,999
 
 /*
 If a lot of rows have been deleted from LOB tables then fragmentation may be an issue. The following commands explore this.
