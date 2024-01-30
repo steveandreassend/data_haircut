@@ -67,7 +67,7 @@ P_INV_DOC_WDCSV
 
     DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name ||'.' || l_lobname);
 
-    EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' PARTITION ('|x.partition_name|') WHERE '||l_lobname||' IS NOT NULL'
+    EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' PARTITION ('||x.partition_name||') WHERE '||l_lobname||' IS NOT NULL'
     INTO l_sample_size;
 
     SELECT GREATEST(l_sample_size, DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
