@@ -95,10 +95,19 @@ P_INV_DOC_WDCSV
 
     DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name  ||'.' || l_subpartition_name ||'.' || l_lobname);
 
-    EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' SUBPARTITION ('||l_subpartition_name||') WHERE '||l_lobname||' IS NOT NULL'
-    INTO l_sample_size;
+    BEGIN
+      EXECUTE IMMEDIATE 'SELECT COUNT(1)*0.11 FROM '||l_tabowner||'.'||l_tabname||' SUBPARTITION ('||l_subpartition_name||') WHERE '||l_lobname||' IS NOT NULL'
+      INTO l_sample_size;
 
-    SELECT GREATEST(l_sample_size, DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
+    EXCEPTION
+      WHEN OTHERS THEN
+          -- Handling exceptions
+          DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'SQL Error Message: ' || SQLERRM);
+          
+    END;
+
+    SELECT GREATEST(NVL(l_sample_size,0), DBMS_COMPRESSION.COMP_RATIO_LOB_MAXROWS) INTO l_sample_size
     FROM DUAL;
 
     FOR i IN 1..l_numbers.COUNT LOOP
