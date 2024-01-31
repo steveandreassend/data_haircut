@@ -129,8 +129,8 @@ P_INV_DOC_WDCSV
       EXCEPTION
         WHEN OTHERS THEN
           -- Handling exceptions
-          DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
-          DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+          DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'SQL Error Message: ' || SQLERRM);
       END;
     END LOOP;
   END LOOP;
