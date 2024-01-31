@@ -92,7 +92,7 @@ P_INV_DOC_WDCSV
     )
     WHERE rn = 1;
 
-    DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name  ||'.' || l_subpartition_name ;
+    DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname || '.' || x.partition_name  ||'.' || l_subpartition_name );
 
     FOR i IN 1..l_numbers.COUNT LOOP
       -- Loop through different compression types
