@@ -56,8 +56,7 @@ BEGIN
           -- Handling exceptions
           DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
           DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
-      END;
-    END LOOP;  
+    END;
   END LOOP;
 END;
 /
