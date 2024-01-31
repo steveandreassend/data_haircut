@@ -11,6 +11,8 @@ DECLARE
   l_cmp_ratio      NUMBER;
   l_comptype_str   VARCHAR2(32767);
   l_scratchtbsname varchar2(256) := 'USERS';
+  l_tabowner = 'AAX2SW';
+  l_tabname = 'D_DOCUMENTS';
 
   l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(DBMS_COMPRESSION.COMP_ADVANCED,
   /* Compression Advisor does not require Exadata to validate HCC ratios */
@@ -21,35 +23,15 @@ DBMS_COMPRESSION.COMP_QUERY_LOW,
   );
 
 BEGIN
-/* find all tables larger than 1GB that are partitioned, and get the largest partition */
-  FOR x IN (
-    SELECT owner, table_name, partition_name, segment_name, segment_type
-    FROM (
-      SELECT a.owner, b.table_name, a.partition_name, a.segment_name, a.segment_type,
-      ROW_NUMBER() OVER (PARTITION BY b.table_name ORDER BY SUM(a.bytes) / (1024 * 1024 * 1024) DESC) AS rn
-      FROM dba_segments a, dba_tab_partitions b, dba_tablespaces c
-      WHERE a.segment_type IN ('TABLE PARTITION','TABLE SUBPARTITION')
-      AND c.tablespace_name = a.tablespace_name
-      AND a.owner = b.table_owner
-      AND a.segment_name = b.table_name
-      AND a.partition_name = b.partition_name
-      AND b.table_name IN ('D_DOCUMENTS') /* specify your table names */
-      AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
-      GROUP BY a.owner, b.table_name, a.partition_name, a.segment_name, a.segment_type
-      HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
-    )
-    WHERE rn = 1
-  )
-  LOOP
-    DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || x.owner || '.' || x.table_name||'.'||x.partition_name);
+  DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || x.owner || '.' || l_tabname);
     FOR i IN 1..l_numbers.COUNT LOOP
       -- Loop through different compression types
       BEGIN
         DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
           scratchtbsname => l_scratchtbsname,
-          ownname        => x.owner,
-          objname        => x.table_name,
-          subobjname     => x.partition_name,
+          ownname        => l_tabowner,
+          objname        => l_tabname,
+          subobjname     => NULL,
           comptype       => l_numbers(i),
           blkcnt_cmp     => l_blkcnt_cmp,
           blkcnt_uncmp   => l_blkcnt_uncmp,
