@@ -9,8 +9,8 @@ Otherwise rows are not being deleted, then the LOB Segment Storage Size is indic
 
 PROMPT Determine size of BLOB data...
 
-SELECT SUM(dbms_lob.getlength(DOCUMENT)) getlength
-FROM AAX2SW.D_DOCUMENTS;
+SELECT SUM(dbms_lob.getlength(COMMUNICATION)) getlength
+FROM AAX2SW.D_COMMUNICATIONS;
 
 PROMPT If CLOB then this is length
 PROMPT If BLOB then this is bytes
@@ -67,8 +67,8 @@ END cloblengthb;
 /
 
 /* Unnecessary it is a BLOB
-SELECT SUM(cloblengthb(DOCUMENT)) cloblengthb
-FROM AAX2SW.D_DOCUMENTS;
+SELECT SUM(cloblengthb(COMMUNICATION)) cloblengthb
+FROM AAX2SW.D_COMMUNICATIONS;
 */       
 
 DROP FUNCTION cloblengthb;
@@ -77,7 +77,7 @@ PROMPT Determine the storage usage in a LOB segment using DBMS_SPACE.SPACE_USAGE
 
 DECLARE
   l_owner VARCHAR2(64) := 'AAX2SW';
-  l_segname VARCHAR2(64) := 'SYS_LOB0000100059C00002$$';
+  l_segname VARCHAR2(64) := 'SYS_LOB0000100033C00003$$';
   l_segtype VARCHAR2(64) := 'LOB';
   l_segment_size_blocks NUMBER;
   l_segment_size_bytes NUMBER;
