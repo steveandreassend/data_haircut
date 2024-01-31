@@ -11,8 +11,8 @@ DECLARE
   l_cmp_ratio      NUMBER;
   l_comptype_str   VARCHAR2(32767);
   l_scratchtbsname varchar2(256) := 'USERS';
-  l_tabowner = 'AAX2SW';
-  l_tabname = 'D_DOCUMENTS';
+  l_tabowner := 'AAX2SW';
+  l_tabname := 'D_DOCUMENTS';
 
   l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(DBMS_COMPRESSION.COMP_ADVANCED,
   /* Compression Advisor does not require Exadata to validate HCC ratios */
@@ -23,7 +23,7 @@ DBMS_COMPRESSION.COMP_QUERY_LOW,
   );
 
 BEGIN
-  DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || x.owner || '.' || l_tabname);
+  DBMS_OUTPUT.PUT_LINE(chr(13)||chr(10)||'Object = ' || l_tabowner || '.' || l_tabname);
   FOR i IN 1..l_numbers.COUNT LOOP
     -- Loop through different compression types
     BEGIN
