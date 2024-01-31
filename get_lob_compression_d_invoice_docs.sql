@@ -109,7 +109,7 @@ P_INV_DOC_WDCSV
         tabowner       => l_tabowner,
         tabname        => l_tabname,
         lobname        => l_lobname,
-        partname       => x.partition_name,
+        partname       => l_subpartition_name,
         comptype       => l_numbers(i),
         blkcnt_cmp     => l_blkcnt_cmp,
         blkcnt_uncmp   => l_blkcnt_uncmp,
