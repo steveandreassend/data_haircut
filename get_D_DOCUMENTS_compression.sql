@@ -11,8 +11,8 @@ DECLARE
   l_cmp_ratio      NUMBER;
   l_comptype_str   VARCHAR2(32767);
   l_scratchtbsname varchar2(256) := 'USERS';
-  l_tabowner := 'AAX2SW';
-  l_tabname := 'D_DOCUMENTS';
+  l_tabowner varchar2(256) := 'AAX2SW';
+  l_tabname  varchar2(256) := 'D_DOCUMENTS';
 
   l_numbers CONSTANT SYS.ODCINUMBERLIST := SYS.ODCINUMBERLIST(DBMS_COMPRESSION.COMP_ADVANCED,
   /* Compression Advisor does not require Exadata to validate HCC ratios */
