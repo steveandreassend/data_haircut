@@ -61,7 +61,7 @@ P_INV_DOC_WDCSV
   FOR x IN (
     SELECT DISTINCT partition_name
     FROM dba_tab_partitions
-    WHERE owner = l_tabowner
+    WHERE TABLE_OWNER = l_tabowner
     AND table_name = l_tabname
     ORDER BY 1
   ) LOOP
@@ -84,7 +84,7 @@ P_INV_DOC_WDCSV
       WHERE a.segment_type = 'TABLE SUBPARTITION'
       AND c.tablespace_name = a.tablespace_name
       AND a.owner = b.table_owner
-      AND b.table_name = 'D_INVOICE_DOCS'
+      AND b.table_name = l_tabname
       AND a.segment_name = b.table_name
       AND a.partition_name = b.subpartition_name
       AND b.PARTITION_NAME = x.partition_name /* limit query of range based subpartitions to the given doc type partition */
