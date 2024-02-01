@@ -63,6 +63,7 @@ P_INV_DOC_WDCSV
     FROM dba_tab_partitions
     WHERE TABLE_OWNER = l_tabowner
     AND table_name = l_tabname
+    AND REGEX_LIKE(partition_name,'FIBRS|FIFLN|FISFC|DOC_RS|DOC_SB|DOC_SF|DOC_SW')
     ORDER BY 1
   ) LOOP
 
