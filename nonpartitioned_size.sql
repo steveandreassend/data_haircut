@@ -28,7 +28,7 @@ GROUP BY a.owner, b.table_name, a.tablespace_name, a.segment_name, a.segment_typ
 HAVING ROUND(SUM(a.bytes) / (1024 * 1024 * 1024), 2) >= 1
 ORDER BY 1,2,3,4,5;
 
-PROMPT Report large indexes on tables 1GB+
+PROMPT Report large indexes on tables 1GB+ (Regular and GLOBAL indexes on partitioned tables)
 SELECT a.owner,
 b.index_name,
 a.tablespace_name,
@@ -44,7 +44,7 @@ and a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N')
 and (b.table_owner, b.table_name) IN (
   SELECT c.owner, d.table_name
   FROM dba_segments c, dba_tables d
-  WHERE c.segment_type = 'TABLE'
+  WHERE c.segment_type IN ('TABLE','TABLE PARTITION','TABLE SUBPARTITION')
   AND c.owner = d.owner
   AND c.segment_name = d.table_name
   and c.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N') 
