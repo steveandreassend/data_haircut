@@ -31,7 +31,35 @@ CREATE TABLE AAX2SW.COPY_C_CDRS_BODY AS
 CREATE TABLE AAX2SW.D_TOLL_OBJECT_USAGE AS
   SELECT * FROM AAX2SW.D_TOLL_OBJECT_USAGE PARTITION (P20231001);
 
-/* create indexes */
+/* create indexes
+SQL> select table_name, index_name, column_name, COLUMN_POSITION FROM DBA_IND_COLUMNS WHERE table_name IN ('C_CDRS','C_CDRS_BODY','D_TOLL_OBJECT_USAGE') ORDER BY 1,2, 4;
+
+TABLE_NAME                               INDEX_NAME                                         COLUMN_NAME                              COLUMN_POSITION
+---------------------------------------- -------------------------------------------------- ---------------------------------------- ---------------
+C_CDRS                                   C_CDRS1$$ID                                        ID                                                     1
+C_CDRS                                   C_CDRS1$DUPLICATE_CDR                              CDR_ID                                                 1
+C_CDRS                                   C_CDRS1$DUPLICATE_CHECK                            CDR_ID                                                 1
+C_CDRS                                   C_CDRS1$DUPLICATE_CHECK                            OBU_ID                                                 2
+C_CDRS                                   C_CDRS1$DUPLICATE_CHECK                            FIRST_TIME_OF_TOLL_OBJ_DET_TS                          3
+C_CDRS                                   C_CDRS1$DUPLICATE_OBU                              OBU_ID                                                 1
+C_CDRS_BODY                              C_CDRS_BODY1$$ID                                   ID                                                     1
+C_CDRS_BODY                              C_CDRS_BODY1$$TOLLUSAGE                            TOLL_USAGE                                             1
+C_CDRS_BODY                              C_CDRS_BODY1$CDR_RAW_ID                            CDR_RAW_ID                                             1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAG1$REGION_OBU                     REGION                                                 1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAG1$REGION_OBU                     OBU                                                    2
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE$TOU_ID                         TOU_ID                                                 1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE$US_AM                          USAGE                                                  1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE$US_AM                          AMOUNT                                                 2
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE1$$ID                           ID                                                     1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE1$$OBU                          EXIT_TIME                                              1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE1$$OBU                          OBU                                                    2
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE1$$OBU                          SYS_NC00016$                                           3
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE1$ENTITY                        ENTITY                                                 1
+D_TOLL_OBJECT_USAGE                      D_TOLL_OBJECT_USAGE1$USAGE                         USAGE                                                  1
+
+20 rows selected. 
+
+*/
 
 PROMPT Reporting table compression...
 
