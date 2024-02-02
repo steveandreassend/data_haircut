@@ -6,7 +6,7 @@ SET LINES 400 PAGES 1000
 If a lot of rows have been deleted from LOB tables then fragmentation may be an issue. The following commands explore this.
 Otherwise rows are not being deleted, then the LOB Segment Storage Size is indicative of the LOB data size.
 */
-
+/*
 PROMPT Determine size of BLOB data...
 
 SELECT SUM(dbms_lob.getlength(BLOB_DATA)) getlength
@@ -16,7 +16,7 @@ PROMPT If CLOB then this is length
 PROMPT If BLOB then this is bytes
 
 PROMPT Determine size of CLOB data
-
+*/
 /*
 How to Return CLOB Size in Bytes like LENGTHB Function of CHAR/VARCHAR2 (Document  790886.1)
 
@@ -98,7 +98,7 @@ BEGIN
   WHERE owner = UPPER(l_owner)
   AND   segment_name = UPPER(l_segname);
 
-  IF UPPER(l_segtype) NOT IN ('LOB','LOB PARTITION') THEN
+  IF UPPER(l_segtype) NOT IN ('LOB','LOB PARTITION','LOB SUBPARTITION') THEN
     raise_application_error(-20000,'Specify LOB, or LOB PARTITION if the target objected is a partitioned LOB column');
   END IF;
 
