@@ -154,20 +154,39 @@ P_INV_DOC_WDCSV
     FOR i IN 1..l_numbers.COUNT LOOP
       BEGIN
       -- Loop through different compression types
-      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-        scratchtbsname => l_scratchtbsname,
-        tabowner       => l_tabowner,
-        tabname        => l_tabname,
-        lobname        => l_lobname,
-        partname       => l_subpartition_name,
-        comptype       => l_numbers(i),
-        blkcnt_cmp     => l_blkcnt_cmp,
-        blkcnt_uncmp   => l_blkcnt_uncmp,
-        lobcnt         => l_lobcnt,
-        cmp_ratio      => l_cmp_ratio,
-        comptype_str   => l_comptype_str,
-        subset_numrows => l_sample_size
-      );
+        BEGIN
+          DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+            scratchtbsname => l_scratchtbsname,
+            tabowner       => l_tabowner,
+            tabname        => l_tabname,
+            lobname        => l_lobname,
+            partname       => l_subpartition_name,
+            comptype       => l_numbers(i),
+            blkcnt_cmp     => l_blkcnt_cmp,
+            blkcnt_uncmp   => l_blkcnt_uncmp,
+            lobcnt         => l_lobcnt,
+            cmp_ratio      => l_cmp_ratio,
+            comptype_str   => l_comptype_str,
+            subset_numrows => l_sample_size
+          );
+        EXCEPTION
+          WHEN OTHERS THEN
+            /* Handle this SQL Error Message: ORA-20000: Compression Advisor sample size exceeds the total number of non-null lobs: */
+            DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+              scratchtbsname => l_scratchtbsname,
+              tabowner       => l_tabowner,
+              tabname        => l_tabname,
+              lobname        => l_lobname,
+              partname       => l_subpartition_name,
+              comptype       => l_numbers(i),
+              blkcnt_cmp     => l_blkcnt_cmp,
+              blkcnt_uncmp   => l_blkcnt_uncmp,
+              lobcnt         => l_lobcnt,
+              cmp_ratio      => l_cmp_ratio,
+              comptype_str   => l_comptype_str,
+              subset_numrows => DBMS_COMPRESSION.COMP_RATIO_LOB_MINROWS
+            );
+        END;
 
         -- Display compression information for each compression type
         DBMS_OUTPUT.PUT_LINE('Compression Type                                                : ' || l_comptype_str);
