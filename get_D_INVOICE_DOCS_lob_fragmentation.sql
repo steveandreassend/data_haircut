@@ -106,8 +106,8 @@ BEGIN
   FOR x IN (
     SELECT DISTINCT partition_name
     FROM dba_tab_partitions
-    WHERE TABLE_OWNER = l_tabowner
-    AND table_name = l_tabname
+    WHERE TABLE_OWNER = UPPER(l_owner)
+    AND table_name = UPPER(l_tabname)
     ORDER BY 1
   ) LOOP
 
