@@ -93,7 +93,7 @@ DECLARE
   l_non_data_bytes NUMBER;
 BEGIN
 
-  SELECT DECODE(segment_type,'LOBSEGMENT','LOB',segment_type) INTO l_segtype
+  SELECT DISTINCT DECODE(segment_type,'LOBSEGMENT','LOB',segment_type) INTO l_segtype
   FROM dba_segments
   WHERE owner = UPPER(l_owner)
   AND   segment_name = UPPER(l_segname);
