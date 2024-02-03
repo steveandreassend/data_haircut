@@ -112,6 +112,8 @@ BEGIN
   ) LOOP
 
   BEGIN
+    DBMS_OUTPUT.PUT_LINE(' Owner.Segment Name.Partition Name  = '||UPPER(l_owner)||'.'||UPPER(l_segname)||'.'||UPPER(x.partition_name));
+    
     DBMS_SPACE.SPACE_USAGE(
       segment_owner => UPPER(l_owner),
       segment_name => UPPER(l_segname),
@@ -133,7 +135,6 @@ BEGIN
     l_non_data_bytes := l_unused_bytes + l_expired_bytes + l_unexpired_bytes;
 
     DBMS_OUTPUT.ENABLE;
-    DBMS_OUTPUT.PUT_LINE(' Owner.Segment Name.Partition Name  = '||UPPER(l_owner)||'.'||UPPER(l_segname)||'.'||UPPER(x.partition_name));
     DBMS_OUTPUT.PUT_LINE(' Segment Blocks/Bytes   = '||l_segment_size_blocks||' / '||l_segment_size_bytes);
     DBMS_OUTPUT.PUT_LINE(' Unused Blocks/Bytes    = '||l_unused_blocks||' / '||l_unused_bytes);
     DBMS_OUTPUT.PUT_LINE(' Used Blocks/Bytes      = '||l_used_blocks||' / '||l_used_bytes);
