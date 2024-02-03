@@ -80,6 +80,22 @@ DECLARE
   l_segname VARCHAR2(64) := 'SYS_LOB0000277792C00008$$';
   l_segtype VARCHAR2(64) := 'LOB';
   l_tabname varchar2(256) := 'D_INVOICE_DOCS';
+
+  /* partition counters */
+  p_segment_size_blocks NUMBER;
+  p_segment_size_bytes NUMBER;
+  p_used_blocks NUMBER;
+  p_used_bytes NUMBER;
+  p_expired_blocks NUMBER;
+  p_expired_bytes NUMBER;
+  p_unexpired_blocks NUMBER;
+  p_unexpired_bytes NUMBER;
+  p_unused_blocks NUMBER;
+  p_unused_bytes NUMBER;
+  p_non_data_blocks NUMBER;
+  p_non_data_bytes NUMBER;
+
+  /* subpartition counters */
   l_segment_size_blocks NUMBER;
   l_segment_size_bytes NUMBER;
   l_used_blocks NUMBER;
@@ -92,8 +108,10 @@ DECLARE
   l_unused_bytes NUMBER;
   l_non_data_blocks NUMBER;
   l_non_data_bytes NUMBER;
-BEGIN
 
+BEGIN
+  DBMS_OUTPUT.ENABLE;
+  /* because DBMS_SPACE requires LOB specified for a LOGSEGMENT */
   SELECT DISTINCT DECODE(segment_type,'LOBSEGMENT','LOB',segment_type) INTO l_segtype
   FROM dba_segments
   WHERE owner = UPPER(l_owner)
@@ -111,45 +129,141 @@ BEGIN
     ORDER BY 1
   ) LOOP
 
-  BEGIN
+/*
+There are 24 different document types, each stored in their own partition, and sub-partitioned by date range
+PARTITION_NAME
+------------------------------
+P_INV_DOC_APPBRS
+P_INV_DOC_APPFLN
+P_INV_DOC_APPSFC
+P_INV_DOC_CPO
+P_INV_DOC_DTCSV
+P_INV_DOC_DTS
+P_INV_DOC_DTSCUST
+P_INV_DOC_EFNBAG
+P_INV_DOC_EFNDE
+P_INV_DOC_FIBRS
+P_INV_DOC_FIFLN
+P_INV_DOC_FILHT
+P_INV_DOC_FISFC
+P_INV_DOC_MABAG
+P_INV_DOC_MADE
+P_INV_DOC_RS
+P_INV_DOC_SB
+P_INV_DOC_SF
+P_INV_DOC_SW
+P_INV_DOC_TDPOL
+P_INV_DOC_TFCSV
+P_INV_DOC_TSPOL
+P_INV_DOC_VSLHT
+P_INV_DOC_WDCSV
+
+24 rows selected. 
+*/
+
     DBMS_OUTPUT.PUT_LINE(' Owner.Segment Name.Partition Name  = '||UPPER(l_owner)||'.'||UPPER(l_segname)||'.'||UPPER(x.partition_name));
-    
-    DBMS_SPACE.SPACE_USAGE(
-      segment_owner => UPPER(l_owner),
-      segment_name => UPPER(l_segname),
-      segment_type => UPPER(l_segtype),
-      segment_size_blocks => l_segment_size_blocks,
-      segment_size_bytes => l_segment_size_bytes,
-      used_blocks => l_used_blocks,
-      used_bytes => l_used_bytes,
-      expired_blocks => l_expired_blocks,
-      expired_bytes => l_expired_bytes,
-      unexpired_blocks => l_unexpired_blocks,
-      unexpired_bytes => l_unexpired_bytes,
-      partition_name => x.partition_name
-    );
 
-    l_unused_blocks := l_segment_size_blocks - (l_used_blocks + l_expired_blocks + l_unexpired_blocks);
-    l_unused_bytes := l_segment_size_bytes - (l_used_bytes + l_expired_bytes + l_unexpired_bytes);
-    l_non_data_blocks := l_unused_blocks + l_expired_blocks + l_unexpired_blocks;
-    l_non_data_bytes := l_unused_bytes + l_expired_bytes + l_unexpired_bytes;
+    /* look through all non-empty subpartitions, and aggregate the stats */
+    FOR y IN (
+      SELECT *
+      FROM (
+        SELECT a.owner,
+        b.table_name,
+        a.partition_name,
+        a.tablespace_name,
+        c.DEF_TAB_COMPRESSION,
+        c.COMPRESS_FOR,
+        c.BIGFILE,
+        c.STATUS,
+        a.segment_name,
+        a.segment_type,
+        SUM(a.bytes)
+      FROM dba_segments a, dba_tab_subpartitions b, dba_tablespaces c
+      WHERE a.segment_type = 'TABLE SUBPARTITION'
+      AND c.tablespace_name = a.tablespace_name
+      AND a.owner = b.table_owner
+      AND b.table_owner = l_owner
+      AND b.table_name = l_tabname
+      AND a.segment_name = b.table_name
+      AND a.partition_name = b.subpartition_name
+      AND b.PARTITION_NAME = x.partition_name /* limit query of range based subpartitions to the given doc type partition */
+      AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N')
+      GROUP BY a.owner, b.table_name, a.partition_name, a.tablespace_name, c.DEF_TAB_COMPRESSION,
+      c.COMPRESS_FOR, c.BIGFILE, c.STATUS, a.segment_name, a.segment_type
+      HAVING SUM(a.bytes) > 0
+      )
+    ) LOOP
 
-    DBMS_OUTPUT.ENABLE;
-    DBMS_OUTPUT.PUT_LINE(' Segment Blocks/Bytes   = '||l_segment_size_blocks||' / '||l_segment_size_bytes);
-    DBMS_OUTPUT.PUT_LINE(' Unused Blocks/Bytes    = '||l_unused_blocks||' / '||l_unused_bytes);
-    DBMS_OUTPUT.PUT_LINE(' Used Blocks/Bytes      = '||l_used_blocks||' / '||l_used_bytes);
-    DBMS_OUTPUT.PUT_LINE(' Expired Blocks/Bytes   = '||l_expired_blocks||' / '||l_expired_bytes);
-    DBMS_OUTPUT.PUT_LINE(' Unexpired Blocks/Bytes = '||l_unexpired_blocks||' / '||l_unexpired_bytes);
+      /* for each subpartition */
+      BEGIN
+        DBMS_SPACE.SPACE_USAGE(
+          segment_owner => UPPER(l_owner),
+          segment_name => UPPER(l_segname),
+          segment_type => UPPER(l_segtype),
+          segment_size_blocks => l_segment_size_blocks,
+          segment_size_bytes => l_segment_size_bytes,
+          used_blocks => l_used_blocks,
+          used_bytes => l_used_bytes,
+          expired_blocks => l_expired_blocks,
+          expired_bytes => l_expired_bytes,
+          unexpired_blocks => l_unexpired_blocks,
+          unexpired_bytes => l_unexpired_bytes,
+          partition_name => y.partition_name
+        );
+
+        /* calculate subpartition figures */
+        l_unused_blocks := l_segment_size_blocks - (l_used_blocks + l_expired_blocks + l_unexpired_blocks);
+        l_unused_bytes := l_segment_size_bytes - (l_used_bytes + l_expired_bytes + l_unexpired_bytes);
+        l_non_data_blocks := l_unused_blocks + l_expired_blocks + l_unexpired_blocks;
+        l_non_data_bytes := l_unused_bytes + l_expired_bytes + l_unexpired_bytes;
+
+        /* add subpartition to cumulative partition counters */
+        p_used_blocks         := p_used_blocks         + l_used_blocks;
+        p_used_bytes          := p_used_bytes          + l_used_bytes;
+        p_unused_blocks       := p_unused_blocks       + l_unused_blocks;
+        p_unused_bytes        := p_unused_bytes        + l_unused_bytes;
+        p_non_data_blocks     := p_non_data_blocks     + l_non_data_blocks;
+        p_non_data_bytes      := p_non_data_bytes      + l_non_data_bytes;
+        p_segment_size_bytes  := p_segment_size_bytes  + l_segment_size_bytes;
+        p_segment_size_blocks := p_segment_size_blocks + l_segment_size_blocks;
+        p_unexpired_bytes     := p_unexpired_bytes     + l_unexpired_bytes;
+        p_unexpired_blocks    := p_unexpired_blocks    + l_unexpired_blocks;
+        p_expired_blocks      := p_expired_blocks      + l_expired_blocks;
+        p_expired_bytes       := p_expired_bytes       + l_expired_bytes;
+
+      EXCEPTION
+        WHEN OTHERS THEN
+          -- Handling exceptions
+          DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
+          DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
+      END;
+
+    END LOOP; /* next subpartition */
+
+    /* report partition aggregated statistics */
+    DBMS_OUTPUT.PUT_LINE(' Aggregated Statistics for all subpartitions of partition: '||x.partition_name);
+    DBMS_OUTPUT.PUT_LINE(' Segment Blocks/Bytes   = '||p_segment_size_blocks||' / '||p_segment_size_bytes);
+    DBMS_OUTPUT.PUT_LINE(' Unused Blocks/Bytes    = '||p_unused_blocks||' / '||p_unused_bytes);
+    DBMS_OUTPUT.PUT_LINE(' Used Blocks/Bytes      = '||p_used_blocks||' / '||p_used_bytes);
+    DBMS_OUTPUT.PUT_LINE(' Expired Blocks/Bytes   = '||p_expired_blocks||' / '||p_expired_bytes);
+    DBMS_OUTPUT.PUT_LINE(' Unexpired Blocks/Bytes = '||p_unexpired_blocks||' / '||p_unexpired_bytes);
     DBMS_OUTPUT.PUT_LINE('===========================================================================');
-    DBMS_OUTPUT.PUT_LINE(' Non-Data Blocks/Bytes  = '||l_non_data_blocks||' / '||l_non_data_bytes);
-  EXCEPTION
-    WHEN OTHERS THEN
-      -- Handling exceptions
-      DBMS_OUTPUT.PUT_LINE('SQL Error Code: ' || SQLCODE);
-      DBMS_OUTPUT.PUT_LINE('SQL Error Message: ' || SQLERRM);
-    END;
-
-  END LOOP;
+    DBMS_OUTPUT.PUT_LINE(' Non-Data Blocks/Bytes  = '||p_non_data_blocks||' / '||p_non_data_bytes);
+      
+    /* reset partition counters */
+    p_segment_size_blocks := 0;
+    p_segment_size_bytes := 0;
+    p_used_blocks := 0;
+    p_used_bytes := 0;
+    p_expired_blocks := 0;
+    p_expired_bytes := 0;
+    p_unexpired_blocks := 0;
+    p_unexpired_bytes := 0;
+    p_unused_blocks := 0;
+    p_unused_bytes := 0;
+    p_non_data_blocks := 0;
+    p_non_data_bytes := 0;
+  END LOOP; /* next partition */
 END;
 /
 
