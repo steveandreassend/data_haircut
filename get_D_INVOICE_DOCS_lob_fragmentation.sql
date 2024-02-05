@@ -180,7 +180,7 @@ P_INV_DOC_WDCSV
 24 rows selected. 
 */
 
-    DBMS_OUTPUT.PUT_LINE('Owner.Segment Name.Partition Name  = '||UPPER(l_owner)||'.'||UPPER(l_segname)||'.'||UPPER(x.partition_name));
+    DBMS_OUTPUT.PUT_LINE('Partition Name: '||UPPER(x.partition_name);
 
     /* look through all non-empty subpartitions, and aggregate the stats */
     FOR y IN (
@@ -199,22 +199,32 @@ P_INV_DOC_WDCSV
         a.segment_type,
         SUM(a.bytes)
       FROM dba_segments a, dba_tab_subpartitions b, dba_tablespaces c
-      WHERE a.segment_type = 'TABLE SUBPARTITION'
+      WHERE a.segment_type = UPPER(l_segtype) --'LOB SUBPARTITION' --TABLE SUBPARTITION
+      AND b.table_owner = UPPER(l_owner)
+      AND b.table_name = UPPER(l_tabname)
       AND c.tablespace_name = a.tablespace_name
       AND a.owner = b.table_owner
-      AND b.table_owner = l_owner
-      AND b.table_name = l_tabname
       AND a.segment_name = b.table_name
       AND a.partition_name = b.subpartition_name
       AND b.PARTITION_NAME = x.partition_name /* limit query of range based subpartitions to the given doc type partition */
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N')
-      GROUP BY a.owner, b.table_name, a.partition_name, b.subpartition_name, a.tablespace_name, c.DEF_TAB_COMPRESSION,
-      c.COMPRESS_FOR, c.BIGFILE, c.STATUS, a.segment_name, a.segment_type
+      GROUP BY a.owner,
+               b.table_name,
+               a.partition_name,
+               b.subpartition_name,
+               a.tablespace_name,
+               c.DEF_TAB_COMPRESSION,
+               c.COMPRESS_FOR,
+               c.BIGFILE,
+               c.STATUS,
+               a.segment_name,
+               a.segment_type
       HAVING SUM(a.bytes) > 0
       )
     ) LOOP
 
       /* for each subpartition */
+      dbms_output.put_line('Subpartition Name: '||y.subpartition);
       BEGIN
         DBMS_SPACE.SPACE_USAGE(
           segment_owner => UPPER(l_owner),
