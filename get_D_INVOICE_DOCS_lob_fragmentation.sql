@@ -180,7 +180,7 @@ P_INV_DOC_WDCSV
 24 rows selected. 
 */
 
-    DBMS_OUTPUT.PUT_LINE('Partition Name: '||UPPER(x.partition_name);
+    DBMS_OUTPUT.PUT_LINE('Partition Name: '||UPPER(x.partition_name));
 
     /* look through all non-empty subpartitions, and aggregate the stats */
     FOR y IN (
