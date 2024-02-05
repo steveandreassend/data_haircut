@@ -77,9 +77,10 @@ PROMPT Determine the storage usage in a LOB segment using DBMS_SPACE.SPACE_USAGE
 
 DECLARE
   l_owner VARCHAR2(64) := 'AAX2DMSSW';
-  l_segname VARCHAR2(64) := 'SYS_LOB0000277792C00008$$';
-  l_segtype VARCHAR2(64) := 'LOB';
   l_tabname varchar2(256) := 'D_INVOICE_DOCS';
+  l_column_name VARCHAR2(64) := 'BLOB_DATA';
+  --l_segname VARCHAR2(64) := 'SYS_LOB0000277792C00008$$';
+  l_segtype VARCHAR2(64) := 'LOB';
 
   /* partition counters */
   p_segment_size_blocks NUMBER;
@@ -110,9 +111,25 @@ DECLARE
   l_non_data_bytes NUMBER;
 
 BEGIN
+
   DBMS_OUTPUT.ENABLE;
+
+  dbms_output.put_line('Table Owner: '||l_ower);
+  dbms_output.put_line('Table Name: '||l_tabname);
+  dbms_output.put_line('Column Name: '||l_column_name);
+
+  SELECT DISTINCT segment_name
+  INTO l_segname
+  FROM dba_lobs
+  WHERE owner = UPPER(l_owner)
+  AND table_name = UPPER(l_tabname)
+  AND column_name = UPPER(l_column_name);
+
+  dbms_output.put_line('LOB Segment Name: '||l_segname);
+
   /* because DBMS_SPACE requires LOB specified for a LOGSEGMENT */
-  SELECT DISTINCT DECODE(segment_type,'LOBSEGMENT','LOB',segment_type) INTO l_segtype
+  SELECT DISTINCT DECODE(segment_type,'LOBSEGMENT','LOB',segment_type)
+  INTO l_segtype
   FROM dba_segments
   WHERE owner = UPPER(l_owner)
   AND   segment_name = UPPER(l_segname);
@@ -120,6 +137,8 @@ BEGIN
   IF UPPER(l_segtype) NOT IN ('LOB','LOB PARTITION','LOB SUBPARTITION') THEN
     raise_application_error(-20000,'Specify LOB, or LOB PARTITION if the target objected is a partitioned LOB column');
   END IF;
+
+  dbms_output.put_line('LOB Segment Type: '||l_segtype);
 
   FOR x IN (
     SELECT DISTINCT partition_name
@@ -161,7 +180,7 @@ P_INV_DOC_WDCSV
 24 rows selected. 
 */
 
-    DBMS_OUTPUT.PUT_LINE(' Owner.Segment Name.Partition Name  = '||UPPER(l_owner)||'.'||UPPER(l_segname)||'.'||UPPER(x.partition_name));
+    DBMS_OUTPUT.PUT_LINE('Owner.Segment Name.Partition Name  = '||UPPER(l_owner)||'.'||UPPER(l_segname)||'.'||UPPER(x.partition_name));
 
     /* look through all non-empty subpartitions, and aggregate the stats */
     FOR y IN (
