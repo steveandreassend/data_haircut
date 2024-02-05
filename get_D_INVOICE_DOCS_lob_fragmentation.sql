@@ -114,7 +114,7 @@ BEGIN
 
   DBMS_OUTPUT.ENABLE;
 
-  dbms_output.put_line('Table Owner: '||l_ower);
+  dbms_output.put_line('Table Owner: '||l_owner);
   dbms_output.put_line('Table Name: '||l_tabname);
   dbms_output.put_line('Column Name: '||l_column_name);
 
