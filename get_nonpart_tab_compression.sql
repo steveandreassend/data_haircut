@@ -1,6 +1,10 @@
 SET LINES 400 PAGES 1000
 set serveroutput on
 
+ALTER SESSION SET DB_FILE_MULTIBLOCK_READ_COUNT = 128;
+
+SET TIMING ON
+
 DECLARE
   l_blkcnt_cmp     PLS_INTEGER;
   l_blkcnt_uncmp   PLS_INTEGER;
