@@ -199,7 +199,7 @@ P_INV_DOC_WDCSV
         a.segment_type,
         SUM(a.bytes)
       FROM dba_segments a, dba_tab_subpartitions b, dba_tablespaces c
-      WHERE a.segment_type = UPPER(l_segtype) --'LOB SUBPARTITION' --TABLE SUBPARTITION
+      WHERE a.segment_type = UPPER('TABLE SUBPARTITION')
       AND b.table_owner = UPPER(l_owner)
       AND b.table_name = UPPER(l_tabname)
       AND c.tablespace_name = a.tablespace_name
