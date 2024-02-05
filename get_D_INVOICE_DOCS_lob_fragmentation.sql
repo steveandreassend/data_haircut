@@ -197,7 +197,7 @@ BEGIN
 END LOOP; /* next subpartition */
 
 /* report partition aggregated statistics */
-DBMS_OUTPUT.PUT_LINE(' Aggregated Statistics for all subpartitions of table:');
+DBMS_OUTPUT.PUT_LINE('Aggregated statistics for all subpartitions of table:');
 DBMS_OUTPUT.PUT_LINE(' Segment Blocks/Bytes   = '||p_segment_size_blocks||' / '||p_segment_size_bytes);
 DBMS_OUTPUT.PUT_LINE(' Unused Blocks/Bytes    = '||p_unused_blocks||' / '||p_unused_bytes);
 DBMS_OUTPUT.PUT_LINE(' Used Blocks/Bytes      = '||p_used_blocks||' / '||p_used_bytes);
