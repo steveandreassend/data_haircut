@@ -224,7 +224,7 @@ P_INV_DOC_WDCSV
     ) LOOP
 
       /* for each subpartition */
-      dbms_output.put_line('Subpartition Name: '||y.subpartition);
+      dbms_output.put_line('Subpartition Name: '||y.subpartition_name);
       BEGIN
         DBMS_SPACE.SPACE_USAGE(
           segment_owner => UPPER(l_owner),
