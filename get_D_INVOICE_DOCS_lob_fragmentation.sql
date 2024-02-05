@@ -83,32 +83,32 @@ DECLARE
   l_segtype VARCHAR2(64) := 'LOB';
 
   /* partition counters */
-  p_segment_size_blocks NUMBER;
-  p_segment_size_bytes NUMBER;
-  p_used_blocks NUMBER;
-  p_used_bytes NUMBER;
-  p_expired_blocks NUMBER;
-  p_expired_bytes NUMBER;
-  p_unexpired_blocks NUMBER;
-  p_unexpired_bytes NUMBER;
-  p_unused_blocks NUMBER;
-  p_unused_bytes NUMBER;
-  p_non_data_blocks NUMBER;
-  p_non_data_bytes NUMBER;
+  p_segment_size_blocks NUMBER := 0;
+  p_segment_size_bytes NUMBER := 0;
+  p_used_blocks NUMBER := 0;
+  p_used_bytes NUMBER := 0;
+  p_expired_blocks NUMBER := 0;
+  p_expired_bytes NUMBER := 0;
+  p_unexpired_blocks NUMBER := 0;
+  p_unexpired_bytes NUMBER := 0;
+  p_unused_blocks NUMBER := 0;
+  p_unused_bytes NUMBER := 0;
+  p_non_data_blocks NUMBER := 0;
+  p_non_data_bytes NUMBER := 0;
 
   /* subpartition counters */
-  l_segment_size_blocks NUMBER;
-  l_segment_size_bytes NUMBER;
-  l_used_blocks NUMBER;
-  l_used_bytes NUMBER;
-  l_expired_blocks NUMBER;
-  l_expired_bytes NUMBER;
-  l_unexpired_blocks NUMBER;
-  l_unexpired_bytes NUMBER;
-  l_unused_blocks NUMBER;
-  l_unused_bytes NUMBER;
-  l_non_data_blocks NUMBER;
-  l_non_data_bytes NUMBER;
+  l_segment_size_blocks NUMBER := 0;
+  l_segment_size_bytes NUMBER := 0;
+  l_used_blocks NUMBER := 0;
+  l_used_bytes NUMBER := 0;
+  l_expired_blocks NUMBER := 0;
+  l_expired_bytes NUMBER := 0;
+  l_unexpired_blocks NUMBER := 0;
+  l_unexpired_bytes NUMBER := 0;
+  l_unused_blocks NUMBER := 0;
+  l_unused_bytes NUMBER := 0;
+  l_non_data_blocks NUMBER := 0;
+  l_non_data_bytes NUMBER := 0;
 
 BEGIN
 
