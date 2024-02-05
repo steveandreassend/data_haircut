@@ -79,7 +79,7 @@ DECLARE
   l_owner VARCHAR2(64) := 'AAX2DMSSW';
   l_tabname varchar2(256) := 'D_INVOICE_DOCS';
   l_column_name VARCHAR2(64) := 'BLOB_DATA';
-  --l_segname VARCHAR2(64) := 'SYS_LOB0000277792C00008$$';
+  l_segname VARCHAR2(64); -- := 'SYS_LOB0000277792C00008$$';
   l_segtype VARCHAR2(64) := 'LOB';
 
   /* partition counters */
