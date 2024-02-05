@@ -110,6 +110,7 @@ DECLARE
   l_non_data_blocks NUMBER := 0;
   l_non_data_bytes NUMBER := 0;
 
+  l_segment_count NUMBER;
 BEGIN
 
   DBMS_OUTPUT.ENABLE;
@@ -140,7 +141,15 @@ BEGIN
 
   dbms_output.put_line('LOB Segment Type: '||l_segtype);
 
-  /* look through all non-empty subpartitions, and aggregate the stats */
+  SELECT COUNT(1) INTO l_segment_count
+      FROM dba_segments
+      WHERE bytes > 0
+      AND segment_name = UPPER(l_segname)
+      AND segment_type = UPPER(l_segtype);
+
+  dbms_output.put_line('Subpartition count: '||l_segment_count);
+
+/* look through all non-empty subpartitions, and aggregate the stats */
   FOR y IN (
       SELECT *
       FROM dba_segments
@@ -150,7 +159,7 @@ BEGIN
   ) LOOP
 
       /* for each subpartition */
-      dbms_output.put_line('LOB Subpartition Name: '||y.partition_name);
+      --dbms_output.put_line('LOB Subpartition Name: '||y.partition_name);
       BEGIN
         DBMS_SPACE.SPACE_USAGE(
           segment_owner => UPPER(l_owner),
