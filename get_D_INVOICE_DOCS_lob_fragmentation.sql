@@ -170,6 +170,7 @@ P_INV_DOC_WDCSV
         SELECT a.owner,
         b.table_name,
         a.partition_name,
+        b.subpartition_name,
         a.tablespace_name,
         c.DEF_TAB_COMPRESSION,
         c.COMPRESS_FOR,
@@ -188,7 +189,7 @@ P_INV_DOC_WDCSV
       AND a.partition_name = b.subpartition_name
       AND b.PARTITION_NAME = x.partition_name /* limit query of range based subpartitions to the given doc type partition */
       AND a.owner IN (SELECT username FROM dba_users where oracle_maintained = 'N')
-      GROUP BY a.owner, b.table_name, a.partition_name, a.tablespace_name, c.DEF_TAB_COMPRESSION,
+      GROUP BY a.owner, b.table_name, a.partition_name, b.subpartition_name, a.tablespace_name, c.DEF_TAB_COMPRESSION,
       c.COMPRESS_FOR, c.BIGFILE, c.STATUS, a.segment_name, a.segment_type
       HAVING SUM(a.bytes) > 0
       )
@@ -199,7 +200,7 @@ P_INV_DOC_WDCSV
         DBMS_SPACE.SPACE_USAGE(
           segment_owner => UPPER(l_owner),
           segment_name => UPPER(l_segname),
-          segment_type => UPPER(l_segtype),
+          segment_type => UPPER('TABLE SUBPARTITION'),
           segment_size_blocks => l_segment_size_blocks,
           segment_size_bytes => l_segment_size_bytes,
           used_blocks => l_used_blocks,
@@ -208,7 +209,7 @@ P_INV_DOC_WDCSV
           expired_bytes => l_expired_bytes,
           unexpired_blocks => l_unexpired_blocks,
           unexpired_bytes => l_unexpired_bytes,
-          partition_name => y.partition_name
+          partition_name => y.subpartition_name
         );
 
         /* calculate subpartition figures */
