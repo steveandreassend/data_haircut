@@ -125,8 +125,6 @@ P_INV_DOC_WDCSV
 END;
 /
 
-/* WE ALREADY HAVE THE INDEX DATA */
-EXIT;
 /* alternate way to do all index types together
   
 DECLARE
@@ -158,8 +156,8 @@ END;
 /
 */
 
-PROMPT Reporting partitioned indexes...
-
+PROMPT Reporting subpartitioned indexes...
+/* this report section needs fixing */
 DECLARE
   l_blkcnt_cmp     PLS_INTEGER;
   l_blkcnt_uncmp   PLS_INTEGER;
@@ -181,7 +179,7 @@ BEGIN
     FROM (
       SELECT a.owner, d.table_owner, d.table_name, b.index_name, a.partition_name, a.segment_name, a.segment_type,
       ROW_NUMBER() OVER (PARTITION BY b.index_name ORDER BY SUM(a.bytes) / (1024 * 1024 * 1024) DESC) AS rn
-      FROM dba_segments a, dba_ind_partitions b, dba_tablespaces c, dba_indexes d
+      FROM dba_segments a, dba_ind_subpartitions b, dba_tablespaces c, dba_indexes d
       WHERE a.segment_type IN ('INDEX PARTITION','INDEX SUBPARTITION')
       AND d.owner = b.index_owner
       AND d.index_name = b.index_name
