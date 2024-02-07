@@ -73,7 +73,6 @@ BEGIN
       DBMS_OUTPUT.put_line('Number of rows in a block in compressed sample of the object    : ' || l_row_cmp);
       DBMS_OUTPUT.put_line('Number of rows in a block in uncompressed sample of the object  : ' || l_row_uncmp);
 
-    END LOOP;
   END LOOP;
 END;
 /
